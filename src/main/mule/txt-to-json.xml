@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="138a82c4-c64e-4326-adc4-d3d26475d932" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="14cf4c78-434b-4271-a2c2-192d0bd99f64" >
+		<file:connection workingDir="C:\Users\manghelescu\Downloads" />
+	</file:config>
+	<flow name="txt-to-json" doc:id="5d40d817-3e68-40c7-9961-2a4de19525b2" >
+		<http:listener doc:name="Listener" doc:id="4a3d5353-fd28-40f3-8a3f-28d62b494e10" config-ref="HTTP_Listener_config" path="/stammdaten"/>
+		<file:read doc:name="read file" doc:id="d61e47af-ef27-4051-8575-fdcd187d5735" config-ref="File_Config" path="C:\Users\manghelescu\Downloads\New Text Document.txt" outputMimeType="text/plain"/>
+		<ee:transform doc:name="converting txt to JSON" doc:id="3f2cce4a-3359-4195-a20a-7d8b2423446b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0 
+output application/json 
+
+import * from dw::core::Strings
+
+//line format (also JSON format) with appropriate spacing for each element
+fun formatLine(line: String) = 
+{ 
+"first": trim(substring(line, 0, 3)),
+"second": trim(substring(line, 3, 19)),
+"third": trim(substring(line, 19, 44)),
+"fourth": trim(substring(line, 44, 52)),
+"fifth": trim(substring(line, 52, 59)),
+"sixth": trim(substring(line, 59, 65)),
+"seventh": trim(substring(line, 65, 68)),
+"eighth": trim(substring (line, 68, 77)),
+"ninth": trim(substring(line, 77, 85)),
+} 
+
+//create a variable that takes Payload as a String
+var inputText = payload as String
+
+//function to split and filter the lines 
+fun txtToJson(inputText: String) = 
+    inputText splitBy "\n" 
+    map (line) -> 
+        if (!isEmpty(trim(line))) formatLine(line) else null
+    filter ((line) -> line != null)
+    
+--- 
+txtToJson(payload)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="029946ea-ea8c-4d03-925f-ce7d0baf46ab" message="#[payload]"/>
+	</flow>
+</mule>

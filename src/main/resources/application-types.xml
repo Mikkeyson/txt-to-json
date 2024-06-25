@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="test" format="fixedWidth">
+      <types:shape format="fixedWidth" element="test" location="test.ffd" example="examples/20231019_RVS_Stammdaten_Beispiel.txt"/>
+    </types:type>
+  </types:catalog>
+</types:mule>

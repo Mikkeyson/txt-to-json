@@ -1,0 +1,12 @@
+form: FIXEDWIDTH
+id: 'test'
+name: 'test'
+values: 
+- { name: 'Typ', usage: M, type: String, length: 6 }
+- { name: 'PSP', usage: M, type: String, length: 24 }
+- { name: 'BE ID', usage: M, type: String, length: 8 }
+- { name: 'Kostenträger', usage: M, type: String, length: 9 }
+- { name: 'KY Typ', usage: M, type: String, length: 2 }
+- { name: 'Feldname', usage: M, type: String, length: 10 }
+- { name: 'FeldTech', usage: M, type: String, length: 25 }
+- { name: 'Feldinhalt', usage: M, type: String, length: 256 }
